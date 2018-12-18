@@ -4,6 +4,8 @@ package jQueryInterface
 
 import org.w3c.dom.*
 import org.w3c.dom.events.*
+import org.w3c.xhr.*
+import kotlin.js.*
 
 
 typealias EventHandler = (Event?) -> Unit
@@ -16,8 +18,17 @@ typealias EventHandler = (Event?) -> Unit
  */
 external class JQuery {
 
+    /**
+     * Adds the specified class(es) to each element in the set of matched elements.
+     *
+     * See also: http://api.jquery.com/addClass/#addClass-className
+     *
+     * @param className One or more space-separated classes to be added to the class attribute of each matched element.
+     *
+     * @return jQuery
+     */
     fun addClass(className: String): JQuery
-    fun addClass(f: (Int, String) -> String): JQuery
+    fun addClass(transformer: (index: Int, existingClass: String) -> String): JQuery
 
     fun attr(attrName: String): Any?
     fun attr(attrName: String, value: String?): JQuery
@@ -37,6 +48,7 @@ external class JQuery {
     fun `val`(newValue: Double?): JQuery
     fun `val`(newValue: Array<*>?): JQuery
 
+
     fun html(): String
     fun html(s: String): JQuery
     fun html(f: (Int, String) -> String): JQuery
@@ -46,6 +58,7 @@ external class JQuery {
     fun removeClass(className: String): JQuery
     fun height(): Number
     fun width(): Number
+
 
     fun click(): JQuery
 
@@ -68,9 +81,16 @@ external class JQuery {
     fun load(handler: EventHandler): JQuery
     fun change(handler: EventHandler): JQuery
 
-    fun append(str: String): JQuery
-    fun before(content: JQuery): JQuery
+    fun append(vararg str: String): JQuery
+    fun append(vararg str: Element): JQuery
+    fun append(vararg str: Array<String>): JQuery
+    fun append(vararg str: Array<Element>): JQuery
+    fun append(vararg str: JQuery): JQuery
+    fun append(str: (index: Int, html: String) -> String): JQuery
+    fun append(str: (index: Int, html: String) -> Element): JQuery
+    fun append(str: (index: Int, html: String) -> JQuery): JQuery
     fun before(content: String): JQuery
+    fun before(content: JQuery): JQuery
     /**
      * Remove the set of matched elements from the DOM.
      *
@@ -100,44 +120,72 @@ external class JQuery {
     fun size(): Int
 
     operator fun get(index: Int): Element
+
+    /**
+     * Load JSON-encoded data from the server using a GET HTTP request.
+     *
+     * http://api.jquery.com/jQuery.getJSON/
+     *
+     * @param url     A string containing the URL to which the request is sent.
+     * @param data    A plain object or string that is sent to the server with the request.
+     * @param success A callback function that is executed if the request succeeds.
+     */
+    fun getJSON(url: String, data: String = definedExternally, success: GetJsonSuccess = definedExternally)
 }
+
+
 
 typealias JQueryMapper<To> = (index: Int, element: Element) -> To
 
-open public external class MouseEvent(): Event {
-    public val pageX: Double
-    public val pageY: Double
-//    public fun preventDefault()
-    public fun isDefaultPrevented(): Boolean
+
+
+typealias GetJsonSuccess = (data: Json, textStatus: String, jqXHR: jqXHR) -> Unit
+
+
+open external class MouseEvent : Event {
+    val pageX: Double
+    val pageY: Double
+    //    public fun preventDefault()
+    fun isDefaultPrevented(): Boolean
 }
 
-public external class MouseClickEvent() : MouseEvent {
-    public val which: Int
+external class MouseClickEvent : MouseEvent {
+    val which: Int
 }
 
 @JsName("$")
-public external fun jq(selector: String): JQuery
+external fun jq(selector: String): JQuery
 
 @JsName("$")
-public external fun jq(selector: String, context: Element): JQuery
+external fun jq(selector: String, context: Element): JQuery
 
 @JsName("$")
-public external fun jq(selector: String, context: JQuery): JQuery
+external fun jq(selector: String, context: JQuery): JQuery
 
 @JsName("$")
-public external fun jq(callback: () -> Unit): JQuery
+external fun jq(callback: () -> Unit): JQuery
 
 @JsName("$")
-public external fun jq(obj: JQuery): JQuery
+external fun jq(selection: JQuery): JQuery
 
 @JsName("$")
-public external fun jq(el: Element): JQuery
+external fun jq(element: Element): JQuery
 
 @JsName("$")
-public external fun jq(): JQuery
+external fun jq(window: Window): JQuery
+
+@JsName("$")
+external fun jq(): JQuery
+
+@JsName("$")
+external val jq: JQuery
 
 
 
 @Suppress("UnsafeCastFromDynamic")
 inline val EventTarget.parentElement: Element
     get() = asDynamic().parentElement
+
+
+
+external class jqXHR: XMLHttpRequest
