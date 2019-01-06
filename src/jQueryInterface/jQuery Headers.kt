@@ -119,6 +119,9 @@ external class JQuery {
     fun <To> map(mapper: JQueryMapper<To>): Array<To>
 
     val length: Int
+    @Deprecated(message = "The .size() method is deprecated as of jQuery 1.8. Use the .length property instead.",
+                replaceWith = ReplaceWith("length"),
+                level = DeprecationLevel.ERROR)
     fun size(): Int
 
     operator fun get(index: Int): Element
