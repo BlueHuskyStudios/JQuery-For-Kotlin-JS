@@ -2,9 +2,11 @@
 
 package jQueryInterface
 
-import org.w3c.dom.*
-import org.w3c.dom.events.*
-import org.w3c.xhr.*
+import org.w3c.dom.Element
+import org.w3c.dom.Window
+import org.w3c.dom.events.Event
+import org.w3c.dom.events.EventTarget
+import org.w3c.xhr.XMLHttpRequest
 import kotlin.js.*
 
 
@@ -120,17 +122,6 @@ external class JQuery {
     fun size(): Int
 
     operator fun get(index: Int): Element
-
-    /**
-     * Load JSON-encoded data from the server using a GET HTTP request.
-     *
-     * http://api.jquery.com/jQuery.getJSON/
-     *
-     * @param url     A string containing the URL to which the request is sent.
-     * @param data    A plain object or string that is sent to the server with the request.
-     * @param success A callback function that is executed if the request succeeds.
-     */
-    fun getJSON(url: String, data: String = definedExternally, success: GetJsonSuccess = definedExternally)
 }
 
 
@@ -178,7 +169,7 @@ external fun jq(window: Window): JQuery
 external fun jq(): JQuery
 
 @JsName("$")
-external val jq: JQuery
+external val jq: JQueryStatic
 
 
 
@@ -189,3 +180,22 @@ inline val EventTarget.parentElement: Element
 
 
 external class jqXHR: XMLHttpRequest
+
+
+
+@JsName("$")
+external object JQueryStatic {
+
+    /**
+     * Load JSON-encoded data from the server using a GET HTTP request.
+     *
+     * http://api.jquery.com/jQuery.getJSON/
+     *
+     * @param url     A string containing the URL to which the request is sent.
+     * @param data    A plain object or string that is sent to the server with the request.
+     * @param success A callback function that is executed if the request succeeds.
+     */
+    fun getJSON(url: String,
+                data: String = definedExternally,
+                success: GetJsonSuccess = definedExternally)
+}
